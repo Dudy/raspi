@@ -68,6 +68,10 @@ def farbauswahl():
     if not request.json or not 'farbe' in request.json:
         abort(400)
     print(request.json)
+    print(request.POST['farbe'])
+    print(request.json.farbe)
+
+    setColor(request.POST['farbe'])
     return jsonify(success=True), 200
 
 
