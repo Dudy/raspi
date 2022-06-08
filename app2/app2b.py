@@ -1,6 +1,7 @@
 ## #!/usr/bin/env python3
 
 import RPi.GPIO as GPIO
+import time
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -41,7 +42,7 @@ def setColor(color):
     R_val = (color & 0xFF0000) >> 16
     G_val = (color & 0x00FF00) >> 8
     B_val = (color & 0x0000FF) >> 0
-    # these three lines are used for analyzing the col variables
+    # these three lines are used for analyzing the col variables 
     # assign the first two values of the hexadecimal to R, the middle two assigned to G
     # assign the last two values to B, please refer to the shift operation of the hexadecimal for details.
 
@@ -58,17 +59,17 @@ def setColor(color):
 
     print("color_msg: R_val = %s,    G_val = %s,    B_val = %s" % (R_val, G_val, B_val))
 
-@app.route('/')
+
+@app.route('/', methods=['GET', 'POST'])
 def main():
+    print(farbe)
+    if request.method == 'POST':
+        data = request.form
+        print(data)
+        print(request.form['farbe'])
+        setColor(int(request.form['farbe'], 16))
+
     return render_template('test.html', farbe = farbe)
-
-
-@app.route('/farbauswahl', methods=['POST'])
-def farbauswahl():
-    if not request.json or not 'farbe' in request.json:
-        abort(400)
-    print(request.json)
-    return jsonify(success=True), 200
 
 
 def destroy():
@@ -87,3 +88,4 @@ if __name__ == '__main__':
         app.run(debug=True, port=5000, host='0.0.0.0')
     except KeyboardInterrupt:
         destroy()
+

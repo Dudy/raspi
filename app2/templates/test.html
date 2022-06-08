@@ -12,7 +12,6 @@
                 width: 140px;
             }
 
-
             button {
                 width: 140px;
             }
@@ -49,12 +48,19 @@
             .input-box:focus-within {
                 border-color: #777;
             }
+
+            #farbanzeige {
+                border: solid 1px black;
+                background-color: black;
+                margin-bottom: 20px;
+                height: 100px;
+            }
         </style>
     </head>
     <body>
         <form class="center" action="/" method="post">
-            <label for="farbe">Farbe (Hex-Wert)</label> 
-            <!-- <input type="text" name="farbe" id="farbe" pattern="^#(?:[0-9a-fA-F]{3}){1,2}$" title="Die Eingabe muss eine gültige Webfarbe im RGB Raum in Hex-Notation sein."> -->
+            <label for="farbe">Farbe (Hex-Wert)</label>
+            <div id="farbanzeige"></div>
             <div class="input-box">
                 <span class="prefix">#</span>
                 <input type="text" name="farbe" id="farbe" pattern="^(?:[0-9a-fA-F]{3}){1,2}$" title="Die Eingabe muss eine gültige Webfarbe im RGB Raum in Hex-Notation sein." placeholder="000000" value="{{ farbe }}">
@@ -62,6 +68,25 @@
 
             <button type="submit">anzeigen</button>
         </form>
+    <script>
+        document.getElementsByTagName('form')[0].addEventListener('submit', (event) => {
+            event.preventDefault()
+
+            const farbanzeige = document.querySelector('#farbanzeige')
+            const farbe = document.querySelector('#farbe')
+            farbanzeige.style.backgroundColor = '#' + farbe.value
+
+            let data = {farbe: farbe.value};
+
+            fetch("/farbauswahl", {
+              method: "POST",
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify(data)
+            }).then(res => {
+              console.log("Request complete! response:", res);
+            })
+        })
+    </script>
     </body>
 </html>
 
