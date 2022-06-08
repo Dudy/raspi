@@ -70,7 +70,7 @@ def farbauswahl():
     print(request.json)
     print(request.json['farbe'])
 
-    setColor(request.json['farbe'])
+    setColor(int(request.json['farbe']))
     return jsonify(success=True), 200
 
 
