@@ -1,7 +1,7 @@
 ## #!/usr/bin/env python3
 
 import RPi.GPIO as GPIO
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, abort, jsonify
 
 app = Flask(__name__)
 
