@@ -41,7 +41,7 @@ def pickDigit(digit):
 def timer():
     global counter
     global timer1
-    timer1 = threading.Timer(1.0, timer)
+    timer1 = threading.Timer(0.1, timer)
     timer1.start()
     counter += 1
     print("%d" % counter)
@@ -89,7 +89,7 @@ def handle_keypress():
                     timer1.cancel()
                 else:
                     print("not alive, start now")
-                    timer1 = threading.Timer(1.0, timer)
+                    timer1 = threading.Timer(0.1, timer)
                     timer1.start()
             elif char == 27:
                 break
@@ -108,6 +108,8 @@ def setup():
     #global timer1
     #timer1 = threading.Timer(1.0, timer)
     #timer1.start()
+
+    timer1 = threading.Timer(0.1, timer)
 
     input_thread = threading.Thread(target=handle_keypress)
     input_thread.daemon = True
