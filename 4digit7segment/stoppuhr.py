@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 
+from unittest import runner
 import RPi.GPIO as GPIO
 import time
 import threading
+from pynput.keyboard import Key, Listener
 
 SDI = 24
 RCLK = 23
 SRCLK = 18
 
 placePin = (10, 22, 27, 17)
-# number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90, 0x7f)
-number = (0xff, 0xf9, 0x7f, 0xff, 0xf9, 0x7f, 0xff, 0xf9, 0x7f, 0xff)
+number = (0xc0, 0xf9, 0xa4, 0xb0, 0x99, 0x92, 0x82, 0xf8, 0x80, 0x90, 0x7f)
 dot = 0x7f
 
 counter = 0
 timer1 = 0
+running = False
 
 def clearDisplay():
     for i in range(8):
@@ -67,6 +69,28 @@ def loop():
         hc595_shift(number[counter % 10000//1000])
 
 
+def on_press(key):
+    print('{0} pressed'.format(key))
+
+    if key == Key.space:
+        global running
+        global timer1
+        if running:
+            timer1.cancel()
+            running = False
+        else:
+            global timer1
+            timer1 = threading.Timer(1.0, timer)
+            timer1.start()
+            running = True
+
+
+def on_release(key):
+    print('{0} release'.format(key))
+    if key == Key.esc:
+        # Stop listener
+        return False
+
 def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(SDI, GPIO.OUT)
@@ -74,9 +98,16 @@ def setup():
     GPIO.setup(SRCLK, GPIO.OUT)
     for i in placePin:
         GPIO.setup(i, GPIO.OUT)
-    global timer1
-    timer1 = threading.Timer(1.0, timer)
-    timer1.start()
+    #global timer1
+    #timer1 = threading.Timer(1.0, timer)
+    #timer1.start()
+
+
+    # Collect events until released
+    with Listener(
+            on_press=on_press,
+            on_release=on_release) as listener:
+        listener.join()
 
 def destroy():   # When "Ctrl+C" is pressed, the function is executed.
     global timer1
