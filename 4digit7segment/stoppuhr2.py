@@ -109,6 +109,7 @@ def setup():
     #timer1 = threading.Timer(1.0, timer)
     #timer1.start()
 
+    global timer1
     timer1 = threading.Timer(0.1, timer)
 
     input_thread = threading.Thread(target=handle_keypress)
