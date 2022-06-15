@@ -68,10 +68,22 @@ def loop():
 
 
 def handle_keypress():
+    #while True:
+    #    key = sys.stdin.read(1)
+    #    if (key == " "):
+    #        print("space")
+    
+    import sys, tty, termios
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
     while True:
-        key = sys.stdin.read(1)
-        if (key == " "):
-            print("space")
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+            print(ch)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
 
 def setup():
     GPIO.setmode(GPIO.BCM)
