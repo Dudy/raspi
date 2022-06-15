@@ -24,9 +24,12 @@ def clearDisplay():
     GPIO.output(RCLK, GPIO.HIGH)
     GPIO.output(RCLK, GPIO.LOW)
 
-def hc595_shift(data):
+def hc595_shift(data, with_dot = False):
     for i in range(8):
-        GPIO.output(SDI, 0x80 & (data << i))
+        value = 0x80 & (data << i)
+        if with_dot:
+            value = value & ~0x80
+        GPIO.output(SDI, value)
         GPIO.output(SRCLK, GPIO.HIGH)
         GPIO.output(SRCLK, GPIO.LOW)
     GPIO.output(RCLK, GPIO.HIGH)
@@ -60,7 +63,7 @@ def loop():
 
         clearDisplay()
         pickDigit(2)
-        hc595_shift(number[counter % 1000//100])
+        hc595_shift(number[counter % 1000//100], with_dot = True)
 
         clearDisplay()
         pickDigit(3)
@@ -80,15 +83,14 @@ def handle_keypress():
         try:
             tty.setraw(sys.stdin.fileno())
             char = ord(sys.stdin.read(1))
-            if char == 32:
-                print("1")
 
+            print(char)
+
+            if char == 32:
                 global timer1
                 if timer1.is_alive():
-                    print("alive, kill now")
                     timer1.cancel()
                 else:
-                    print("not alive, start now")
                     timer1 = threading.Timer(0.1, timer)
                     timer1.start()
             elif char == 27:
