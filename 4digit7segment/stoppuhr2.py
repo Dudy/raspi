@@ -70,7 +70,8 @@ def loop():
 def handle_keypress():
     while True:
         key = sys.stdin.read(1)
-        print(key)
+        if (key == " "):
+            print("space")
 
 def setup():
     GPIO.setmode(GPIO.BCM)
