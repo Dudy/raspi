@@ -79,12 +79,23 @@ def handle_keypress():
     while True:
         try:
             tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-            print(ord(ch))
-            if ord(ch) == 27:
+            char = ord(sys.stdin.read(1))
+            if char == 32:
+                print("1")
+
+                global timer1
+                if timer1.is_alive():
+                    print("alive, kill now")
+                    timer1.cancel()
+                else:
+                    print("not alive, start now")
+                    timer1 = threading.Timer(1.0, timer)
+                    timer1.start()
+            elif char == 27:
                 break
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    destroy()
 
 
 def setup():
