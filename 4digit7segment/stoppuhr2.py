@@ -80,7 +80,9 @@ def handle_keypress():
         try:
             tty.setraw(sys.stdin.fileno())
             ch = sys.stdin.read(1)
-            print(ch)
+            print(ord(ch))
+            if ord(ch) == 27:
+                break
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
